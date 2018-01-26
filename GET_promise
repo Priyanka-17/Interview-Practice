@@ -1,0 +1,15 @@
+function myAsyncFunction(url) {
+  var promise = new Promise(function(resolve, reject) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.onload = function() { resolve(xhr.responseText); };
+    xhr.onerror = function() { reject(xhr.statusText); };
+    xhr.send();
+  });
+  return promise;
+}
+
+myAsyncFunction('https://my-json-server.typicode.com/Priyanka-17/dummyServer/posts')
+  .then(function(text) {
+  console.log(text);
+});
