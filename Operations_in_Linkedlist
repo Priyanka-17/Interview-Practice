@@ -1,0 +1,196 @@
+//Create a node
+const Node = function(value, next) {
+  this.value = value;
+  this.next = next;
+}
+
+//Create linked list
+const LinkedList = function() {
+  this.head = null;
+  this.tail = null;
+}
+
+//Print linked list
+LinkedList.prototype.print = function() {
+  let n = this.head;
+  let str = "";
+  while (n != null) {
+    str += JSON.stringify(n.value) + ' -> ';
+    n = n.next;
+  }
+  str += 'null';
+  console.log(str);
+}
+
+//Append - add node to the end
+LinkedList.prototype.append = function(value) {
+  const newNode = new Node(value, null);
+  if (this.head === null) {
+    this.head = this.tail = newNode;
+  } else {
+    this.tail.next = newNode;
+    this.tail = newNode;
+  }
+}
+
+//Prepend - add node in the beginning
+LinkedList.prototype.prepend = function(value) {
+  const newNode = new Node(value, null);
+  if (this.head === null) {
+    this.head = this.tail = newNode;
+  } else {
+    newNode.next = this.head;
+    this.head = newNode;
+  }
+}
+
+//Find middle element
+LinkedList.prototype.findMiddleElement = function() {
+  let n1, n2;
+  n1 = n2 = this.head;
+  while (n2.next != null) {
+    n1 = n1.next;
+    n2 = n2.next ? n2.next.next : null;
+  }
+  console.log(n1.value);
+}
+
+//Reverse linked list
+LinkedList.prototype.reverseLinkedList = function() {
+  if (this.head == null || this.head.next == null) return;
+  let n1 = this.head;
+  let n2 = n1.next;
+  let prev = null;
+  this.tail = this.head;
+  while (n1 != null) {
+    n1.next = prev;
+    prev = n1;
+    n1 = n2;
+    if (n2 != null) {
+      n2 = n2.next;
+    }
+  }
+  this.head = prev;
+}
+
+//Remove a node given value of node
+LinkedList.prototype.remove = function(value) {
+ let n1 = this.head;
+ let prev = null;
+ while (n1 != null && n1.value != value) {
+   prev = n1;
+   n1 = n1.next;
+ }
+ if (n1 != null) {
+   prev.next = n1.next;
+  } else {
+    console.log('Not found');
+  }
+}
+
+//Remove a node given previous node
+LinkedList.prototype.removeNode = function(prevNode) {
+ let n1 = prevNode.next;
+ if (n1 != null) {
+   prevNode.next = n1.next;
+  }
+}
+
+//Caching using linked list
+
+//Create cache
+const Cache = function(maxSize) {
+  this.prevMap = {};
+  this.list = new LinkedList();
+  this.list.append(null);
+  this.size = 0;
+  this.maxSize = maxSize || 100;
+}
+
+//Get a value for a key in cache
+Cache.prototype.get = function(key) {
+  if (key in this.prevMap) {
+    const selectedNode = this.prevMap[key].next;
+
+    if (selectedNode.next) {
+      //console.log("---------------------------");
+      //console.log("selectedNode.next", JSON.stringify(selectedNode.next));
+      const nextKey = selectedNode.next.value.key;
+      this.prevMap[nextKey] = this.prevMap[key];
+      //console.log("---------------------------");
+      //console.log("nextKey", nextKey, "pointing to", JSON.stringify(this.prevMap[key]));
+    }
+
+    this.list.removeNode(this.prevMap[key]);
+    const prevNode = this.list.tail;
+    this.list.append(selectedNode.value);
+    this.prevMap[key] = prevNode;
+    //console.log("=============================");
+    this.list.print();
+    //console.log(this.prevMap);
+    return selectedNode.value.value;
+  } else {
+    return null;
+  }
+}
+
+//Add value for key in cache / update value given a key
+Cache.prototype.put = function(key, value) {
+  const newValue = {key, value};
+  if (key in this.prevMap) {
+    const nextKey = this.prevMap[key].next.next.value.key;
+    this.list.removeNode(this.prevMap[key]);
+    this.prevMap[nextKey] = this.prevMap[key];
+  } else {
+    if (this.size < this.maxSize) {
+      this.size++;
+    } else {
+      const selectedNode = this.list.head.next;
+      if (selectedNode.next) {
+        const headNextKey = selectedNode.next.value.key;
+        this.prevMap[headNextKey] = this.list.head;
+      }
+      this.list.removeNode(this.list.head);
+      delete this.prevMap[selectedNode.value.key];
+    }
+  }
+  const prevNode = this.list.tail;
+  this.list.append(newValue);
+  this.prevMap[key] = prevNode;
+  console.log("=============================");
+  this.list.print();
+  //console.log(this.prevMap);
+}
+
+//Remove value given a key
+Cache.prototype.remove = function(key) {
+  if (key in this.prevMap) {
+    this.list.removeNode(this.prevMap[key]);
+    delete this.prevMap[key];
+    this.size--;
+  }
+}
+
+l1 = new LinkedList();
+l1.append(20);
+l1.append(30);
+l1.append(40);
+l1.prepend(140);
+l1.prepend(130);
+l1.print();
+l1.findMiddleElement();
+l1.remove(141);
+l1.reverseLinkedList();
+l1.print();
+let cache = new Cache(5);
+console.log('key1', cache.get('key1'));
+cache.put('key1', 'ONE');
+cache.put('key2', 'TWO');
+cache.put('key3', 'THREE');
+cache.put('key4', 'FOUR');
+console.log('key1', cache.get('key1'));
+cache.put('key5', 'FIVE');
+cache.put('key6', 'SIX');
+console.log('key2', cache.get('key2'));
+console.log('key1', cache.get('key1'));
+console.log('key3', cache.get('key3'));
