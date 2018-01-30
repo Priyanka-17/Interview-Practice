@@ -1,0 +1,8 @@
+fetch('https://my-json-server.typicode.com/Priyanka-17/dummyServer/posts')
+.then(function(response){
+  console.log(response.body)
+}).catch(function(error) {
+  console.log('Error', error)
+}).then(function() {
+  console.log('Success')
+})
