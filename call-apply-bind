@@ -1,0 +1,13 @@
+var obj = {a: 1, b: 2};
+
+function add(c, d) {
+  return this.a + this.b + c + d;
+}
+
+var calling = add.call(obj, 5, 6);
+var applying = add.apply(obj, [10, 10]);
+var binding = add.bind(obj);
+
+console.log(calling)
+console.log(applying)
+console.log(binding(100, 100))
