@@ -1,0 +1,79 @@
+const Node = function(val) {
+  this.val = val;
+  this.next = null;
+  this.arbit = null;
+}
+
+const LL = function() {
+  this.head = null;
+}
+
+LL.prototype.copy = function(head) {
+  var ll2 = new LL();
+  if (!head) {
+    ll2.head = null;
+    return;
+  }
+  var node = head;
+  var newNode = new Node(node.val);
+  var prev = null;
+  ll2.head = newNode;
+  while (node.next !== null) {
+    node = node.next;
+    prev = newNode;
+    newNode = new Node(node.val);
+    prev.next = newNode; 
+  }
+  node = head;
+  newNode = ll2.head;
+  var arbit = null;
+  var count;
+  var nextNode;
+  while (node !== null) {
+    nextNode = head;
+    count = 0;
+    arbit = node.arbit;
+    while (nextNode !== arbit) {
+      count++;
+      nextNode = nextNode.next;
+    }
+    this.assignArbit(ll2, newNode, count);
+    console.log("-->", node.val, node.arbit.val, newNode.val, newNode.arbit.val);
+    newNode = newNode.next;
+    node = node.next;
+  }
+  return ll2;
+}
+
+LL.prototype.assignArbit = function(ll, node, count) {
+  var i = 0;
+  var prev = node;
+  node = ll.head;
+  while (i < count) {
+    node = node.next;
+    i++;
+  }
+  
+  prev.arbit = node;
+  console.log(node.val, prev.val, prev.arbit.val)
+}
+
+var node1 = new Node(12);
+var node2 = new Node(14);
+var node3 = new Node(16);
+var node4 = new Node(18);
+var node5 = new Node(20);
+node1.next = node2;
+node1.arbit = node3;
+node2.next = node3;
+node2.arbit = node1;
+node3.next = node4;
+node3.arbit = node5;
+node4.next = node5;
+node4.arbit = node2;
+node5.arbit = node1;
+var ll1 = new LL();
+ll1.head = node1;
+var ll2 = ll1.copy(node1);
+console.log(ll1);
+console.log(ll2);
