@@ -1,0 +1,50 @@
+function TreeNode(val) {
+    this.val = val;
+    this.left = this.right = null;
+}
+
+var printAllLevels = function(root) {
+    if (!root.left && !root.right) return [root.val];
+    var queue = [root, null];
+    var poppedNumbers = [];
+    var node;
+    while (queue.length > 1) {
+        node = queue[0];
+        queue.shift();
+        poppedNumbers.push(node == null ? null : node.val);
+        if (!node) {
+            queue.push(null);
+            continue;
+        }
+        if (node.left) queue.push(node.left);
+        if (node.right) queue.push(node.right);
+    }
+    var level = '';
+    for (var i = 0; i < poppedNumbers.length; i++) {
+        if (poppedNumbers[i] != null) {
+            level+= poppedNumbers[i] + ' ';
+        } else {
+            console.log(level + '\n');
+            level = '';
+        }
+        if (i == poppedNumbers.length - 1) {
+            console.log(level);
+        }
+    }
+};
+
+var t11 = new TreeNode(3);
+var t21 = new TreeNode(10);
+var t31 = new TreeNode(20);
+
+var t12 = new TreeNode(14);
+var t22 = new TreeNode(7);
+var t32 = new TreeNode(3);
+
+t11.left = t21;
+t11.right = t31;
+t21.left = t12;
+t21.right = t22;
+t31.left = t32;
+
+var t = printAllLevels(t11);
