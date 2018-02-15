@@ -1,0 +1,50 @@
+function TreeNode(val) {
+    this.val = val;
+    this.left = this.right = null;
+}
+var mergeTrees = function(t1, t2) {
+    var left, right;
+    if (!t1 && !t2) return null;
+    if (!t1 && t2) return t2;
+    if (t1 && !t2) return t1;
+
+    if (t1.left && t2.left) {
+        left = mergeTrees(t1.left, t2.left);
+    } else if (!t1.left && !t2.left) {
+        left = null;
+    } else if (!t1.left) {
+        left = t2.left;
+    } else {
+        left = t1.left;
+    }
+    if (t1.right && t2.right) {
+        right = mergeTrees(t1.right, t2.right);
+    } else if (!t1.right && !t2.right) {
+        right = null;
+    } else if (!t1.right) {
+        right = t2.right;
+    } else {
+        right = t1.right;
+    }
+    var mergedNode = new TreeNode(t1.val + t2.val);
+    mergedNode.left = left;
+    mergedNode.right = right;
+    return mergedNode;
+};
+
+var t11 = new TreeNode(1);
+var t21 = new TreeNode(2);
+var t31 = new TreeNode(3);
+
+var t12 = new TreeNode(1);
+var t22 = new TreeNode(2);
+var t32 = new TreeNode(3);
+
+t31.left = t11;
+t31.right = t21;
+
+t12.left = t22;
+t12.right = t32;
+
+var t = mergeTrees(t31, t12);
+console.log(JSON.stringify(t));
